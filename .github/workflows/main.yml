@@ -23,4 +23,5 @@ jobs:
 
      #finally build your app with the latest command
       - name: Build and test with Maven
+        working-directory: ./api/simpleapi  # Spécifiez le bon chemin
         run: mvn clean compile
