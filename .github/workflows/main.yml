@@ -26,6 +26,13 @@ jobs:
         working-directory: ./simple-api
         run: mvn clean verify
 
+      - name: Run SonarCloud analysis
+        working-directory: ./simple-api
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=raphaelbellepeau_tp-devops-simple-api -Dsonar.organization=raphaelbellepeau -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   # New job for building and pushing Docker images
   build-and-push-docker-image:
     needs: test-backend
