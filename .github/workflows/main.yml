@@ -26,6 +26,13 @@ jobs:
         working-directory: ./simple-api
         run: mvn clean verify
 
+      - name: Check SonarCloud setup
+        run: |
+          echo "SONAR_TOKEN length: ${#SONAR_TOKEN}"
+          echo "Starting SonarCloud analysis..."
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Run SonarCloud analysis
         working-directory: ./simple-api
         run: mvn -B verify sonar:sonar -Dsonar.projectKey=raphaelbellepeau_tp-devops-simple-api -Dsonar.organization=raphaelbellepeau -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
