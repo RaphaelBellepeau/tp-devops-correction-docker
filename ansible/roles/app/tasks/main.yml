@@ -1,0 +1,13 @@
+---
+- name: Run App
+  docker_container:
+    name: simple-api
+    image: dockerbellepeau/tp-devops-simple-api:latest
+    networks:
+      - name: my-network
+    env:
+      DATABASE_HOST: database
+      DATABASE_PASSWORD: pwd
+    restart_policy: unless-stopped
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python

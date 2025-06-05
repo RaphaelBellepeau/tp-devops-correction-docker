@@ -1,0 +1,22 @@
+---
+- name: Create database volume
+  docker_volume:
+    name: db-volume
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
+
+- name: Run Database
+  docker_container:
+    name: database
+    image: dockerbellepeau/tp-devops-database:latest
+    networks:
+      - name: my-network
+    env:
+      POSTGRES_DB: db
+      POSTGRES_USER: usr
+      POSTGRES_PASSWORD: pwd
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    restart_policy: unless-stopped
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python

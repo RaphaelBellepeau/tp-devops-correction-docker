@@ -26,12 +26,7 @@ jobs:
         working-directory: ./simple-api
         run: mvn clean verify
 
-      - name: Check SonarCloud setup
-        run: |
-          echo "SONAR_TOKEN length: ${#SONAR_TOKEN}"
-          echo "Starting SonarCloud analysis..."
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
 
       - name: Run SonarCloud analysis
         working-directory: ./simple-api
@@ -81,3 +76,31 @@ jobs:
           context: ./http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http-server:latest
           push: true
+
+  deploy:
+    needs: build-and-push-docker-image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Install Ansible Docker collection
+        run: ansible-galaxy collection install community.docker
+
+      - name: Run Ansible deployment
+        run: |
+          ansible-playbook -i inventories/setup.yml playbook.yml
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False

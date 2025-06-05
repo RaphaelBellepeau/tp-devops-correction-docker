@@ -1,0 +1,12 @@
+---
+- name: Run HTTPD
+  docker_container:
+    name: httpd
+    image: dockerbellepeau/tp-devops-http-server:latest
+    networks:
+      - name: my-network
+    ports:
+      - "80:80"
+    restart_policy: unless-stopped
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
